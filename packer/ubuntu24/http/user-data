@@ -1,0 +1,37 @@
+#cloud-config
+autoinstall:
+  version: 1
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+# ipv4 configuration
+  network:
+    version: 2
+    ethernets:
+      main-interfaces:
+        match:
+          name: "e*"
+        dhcp4: true
+  
+  # Installs OpenSSH server so Packer can connect later
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  # Wipes the drive and automatically creates standard LVM partitions
+  storage:
+    layout:
+      name: direct
+
+  # Creates temporary user for Packer to log into
+  identity:
+    hostname: ubuntu-template
+    username: packer
+    password: "$6$vcSilJc5EkAaj/sE$RfHgGqzKQ/iVHvFObi8acrKFeLUcNAHH7YPT7hP7euIB5m8p.rbxxntrgyFalFG6eKlKE/OLCq6L2Fu/NWZi4/" # Hash for 'ubuntu'
+
+  #  equivalent to %post. Tells the installer to update the OS
+  late-commands:
+    - curtin in-target --target=/target -- apt-get update
+    - curtin in-target --target=/target -- apt-get install -y qemu-guest-agent
+    - curtin in-target --target=/target -- apt-get upgrade -y

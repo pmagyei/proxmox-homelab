@@ -1,0 +1,16 @@
+resource "proxmox_virtual_environment_download_file" "rocky9_iso" {
+  content_type = "iso"
+  datastore_id = "Synology-nfs" # The storage pool where ISOs live
+  node_name    = "pve"   # Proxmox node name
+  
+  # The URL for Proxmox to download directly
+  url = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-minimal.iso"
+  
+  # The name the file will be saved as in Proxmox
+  file_name = "Rocky-9-latest-x86_64-minimal.iso"
+
+  # Terraform verifies the file after Proxmox downloads it
+  checksum          = "https://download.rockylinux.org/pub/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-minimal.iso.manifest"
+  checksum_algorithm = "sha256"
+}
+

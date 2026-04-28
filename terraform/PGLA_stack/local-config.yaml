@@ -1,0 +1,34 @@
+auth_enabled: false
+# Why: Disables multi-tenant authentication so Alloy doesn't need a password to send logs to it.
+
+server:
+  http_listen_port: 3100
+  # Why: The internal port Loki uses to listen for incoming data.
+
+common:
+  ring:
+    instance_addr: 127.0.0.1
+    # Why: Binds Loki's internal communication to localhost.
+    kvstore:
+      store: inmemory
+      # Why: Keeps the cluster configuration in RAM rather than needing a separate database tool.
+  replication_factor: 1
+  # Why: We only have one Loki container running, so we don't need it to duplicate data across multiple nodes.
+  path_prefix: /loki
+  # Why: Defines the root directory where Loki will store its data inside the container.
+
+schema_config:
+  configs:
+    - from: 2024-01-01
+      # Why: The date this schema format becomes active.
+      store: tsdb
+      # Why: Time Series Database (TSDB) is the modern, highly efficient way Loki stores log indexes.
+      object_store: filesystem
+      # Why: Tells Loki to save the actual log files directly to the local disk (which is mapped to your persistent volume).
+      schema: v13
+      # Why: The specific version of the storage schema.
+      index:
+        prefix: index_
+        # Why: The naming convention for the index files.
+        period: 24h
+        # Why: Creates a new, clean index file every single day.

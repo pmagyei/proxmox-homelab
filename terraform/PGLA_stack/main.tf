@@ -13,15 +13,15 @@ variable "ssh_public_key" {
 }
 
 # 3. Deployment Block
-resource "proxmox_virtual_environment_vm" "ubuntu_lab_nodes" {
+resource "proxmox_virtual_environment_vm" "pgla_host" {
   count = var.vm_count
   # Names them ubuntu-node-1, ubuntu-node-2, etc.
-  name      = "ubuntu-node-${count.index + 1}"
+  name      = "pgla-stack"
   node_name = "pve"
 
   #  Terraform to clone the Golden Image built
   clone {
-    vm_id = 117
+    vm_id = 114
     full  = true
   }
 
@@ -45,7 +45,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_lab_nodes" {
   initialization {
     # Creates  dedicated admin user and injects my SSH public key
     user_account {
-      username = "lfcs-admin"
+      username = "pgla-admin"
       keys     = [var.ssh_public_key]
     }
 

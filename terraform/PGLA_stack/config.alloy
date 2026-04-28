@@ -1,0 +1,39 @@
+// --- METRICS PIPELINE ---
+
+// 1. The Destination for Metrics
+prometheus.remote_write "prom_out" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}
+// Tells Alloy exactly where Prometheus container is living on the Docker network so it knows where to dump the metric data.
+
+// 2. Source for Local Metrics
+prometheus.scrape "alloy_self" {
+  targets = [
+    {"__address__" = "localhost:12345"},
+  ]
+  forward_to = [prometheus.remote_write.prom_out.receiver]
+}
+// Tells Alloy to look at its own internal port, grab the performance metrics it generates, and pipe them directly into the "prom_out" destination we created above.
+
+
+// --- LOGS PIPELINE ---
+
+// 3. The Destination for Logs
+loki.write "loki_out" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+// Why: Tells Alloy the network address of your Loki container so it knows where to send log lines.
+
+// 4. Act as a Log Receiver (Syslog for NAS/UPS)
+loki.source.syslog "network_devices" {
+  listener {
+    address  = "0.0.0.0:1514"
+    protocol = "udp"
+  }
+  forward_to = [loki.write.loki_out.receiver]
+}
+// Why: Network devices like a NAS or UPS rarely run modern monitoring agents; they usually blast out logs using an old protocol called Syslog. This block opens a UDP listener on port 1514, catches those incoming Syslog messages, and pipes them into the "loki_out" destination.

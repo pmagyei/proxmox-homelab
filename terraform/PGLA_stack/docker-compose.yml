@@ -1,0 +1,67 @@
+#version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090" 
+      # Maps a port on Ubuntu VM to the port Prometheus listens on inside the container.
+    volumes:
+      - prometheus_data:/prometheus #label to give the volume
+      # Mounts a persistent volume so metric data survives container updates or restarts.
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro #config in /etc directory
+      # Injects custom config file into the container.
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana #if container is deleted, dashboards and users aren't lost
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro # automatically load dashboards or data sources from local files.
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    volumes:
+      - loki_data:/loki
+      - ./local-config.yaml:/etc/loki/local-config.yaml:ro
+    command: -config.file=/etc/loki/local-config.yaml 
+    #Tells Loki to use its default built-in configuration to start up.
+
+  alloy:
+    image: grafana/alloy:latest
+    ports:
+      - "12345:12345"
+      - "1514:1514/udp" # tells docekr to route incoming syslog traffic from network devices straight to Alloy container.
+    volumes:
+      - ./config.alloy:/etc/alloy/config.alloy:ro
+      # Why: Injects the Alloy configuration file we will build in Phase 3.
+      - alloy_data:/var/lib/alloy/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro #This file is the central nervous system of Docker. It's how the Docker engine communicates.
+    command: 
+        run --server.http.listen-addr=0.0.0.0:12345 /etc/alloy/config.alloy
+    # Why: Executes the Alloy binary and points it to the configuration file you mounted.
+  portainer:
+      image: portainer/portainer
+      restart: always
+      ports:
+      - 9443:9443
+      - 8000:8000 # edge agents
+      volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro #mounting the sockert directly fives portainer admin access to the docker daemon
+      - portainer_data:/data
+
+
+volumes:
+  prometheus_data:
+  grafana_data:
+  loki_data:
+  alloy_data:
+  portainer_data:
+  # Explicitly creates the persistent storage volumes referenced in the services above.
+
+networks:
+  default:
+    name: portainer_network

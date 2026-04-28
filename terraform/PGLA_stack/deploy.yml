@@ -1,0 +1,39 @@
+---
+
+- name: Setup PGLA Stack
+  hosts: pgla-stack 
+  # Tells Ansible which machine from my inventory to target.
+  become: true 
+  # Elevates privileges to install software.
+
+  tasks:
+    - name: Install Docker and Docker Compose
+      ansible.builtin.apt:  #Manages apt package
+        name:
+          - docker.io
+          - docker-compose-v2
+        state: present #ensure that a desired package is installed
+        update_cache: yes # equivalent of apt-get update
+    - name: Create directory in VM
+      ansible.builtin.file:
+        path: /opt/pgla/
+        state: "directory"
+
+    - name: Copy local files to server
+      ansible.builtin.copy:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+      loop:
+          - { src: './docker-compose.yml', dest: '/opt/pgla/docker-compose.yml'}
+          - { src: './prometheus.yml', dest: '/opt/pgla/prometheus.yml'}
+          - { src: './config.alloy', dest: '/opt/pgla/config.alloy'}
+          - { src: './local-config.yaml', dest: '/opt/pgla/local-config.yaml'}
+
+      # Transfers local files to a dedicated directory on the Proxmox VM.
+    
+
+    - name: Start the PGLA stack
+      community.docker.docker_compose_v2:  # Uses Docker Compose to start or shutdown services.
+        project_src: /opt/pgla/
+        state: present
+      # Wriggers Docker Compose to read the file and spin up all four containers.

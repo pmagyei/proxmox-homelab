@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 15s 
+  # Why: Tells Prometheus how often to fetch new data. 15 seconds is a solid baseline.
+
+scrape_configs:
+  - job_name: 'prometheus'
+    # Why: A label to identify this specific data stream when you are searching in Grafana.
+    static_configs:
+      - targets: ['localhost:9090']
+        # Why: Tells Prometheus to scrape its own internal performance metrics.

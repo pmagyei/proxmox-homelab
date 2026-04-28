@@ -22,8 +22,9 @@ resource "proxmox_virtual_environment_vm" "ubuntu_lab_nodes" {
   #  Terraform to clone the Golden Image built
   clone {
     vm_id = 117
-    full  = false
+    full  = true
   }
+
 
   # Hardware settings for the clones 
   cpu {
@@ -31,7 +32,7 @@ resource "proxmox_virtual_environment_vm" "ubuntu_lab_nodes" {
     type  = "host"
   }
   memory {
-    dedicated = 2048
+    dedicated = 4096
   }
 
   # Network Configuration 

@@ -34,6 +34,6 @@ autoinstall:
   late-commands:
     - curtin in-target --target=/target -- apt-get update
     - curtin in-target --target=/target -- apt-get install -y qemu-guest-agent
-    - curtin in-target --target=/target -- apt-get install -y -t ${VERSION_CODENAME}-backports cockpit
+  #  - curtin in-target --target=/target -- apt-get install -y -t ${VERSION_CODENAME}-backports cockpit
     - curtin in-target --target=/target -- apt-get install -y tree
     - curtin in-target --target=/target -- apt-get upgrade -y

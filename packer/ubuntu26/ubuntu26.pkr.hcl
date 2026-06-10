@@ -67,7 +67,7 @@ source "proxmox-iso" "ubuntu26" {
     "boot<enter>"
    ]
   
-  # Logs in as the user we defined in user-data
+  # Logs in as the user defined in user-data
   ssh_username = "packer"
   ssh_password = "ubuntu"
   ssh_timeout  = "20m"

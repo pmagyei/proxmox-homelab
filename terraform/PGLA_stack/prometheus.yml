@@ -8,3 +8,4 @@ scrape_configs:
     static_configs:
       - targets: ['localhost:9090']
         # Why: Tells Prometheus to scrape its own internal performance metrics.
+

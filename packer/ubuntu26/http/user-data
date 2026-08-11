@@ -35,7 +35,5 @@ autoinstall:
     - curtin in-target --target=/target -- apt-get update
     - curtin in-target --target=/target -- apt-get install -y qemu-guest-agent
     - curtin in-target --target=/target -- apt-get install -y tree
-    - curtin in-target --target=/target -- apt-get install -y zsh git curl
-    - curtin in-target -- sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
-    - curtin in-target -- chsh -s /usr/bin/zsh ubuntu
+    - curtin in-target --target=/target -- apt-get install -y bash-completion
     - curtin in-target --target=/target -- apt-get upgrade -y

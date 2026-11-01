@@ -21,7 +21,7 @@ variable "proxmox_token" {
   sensitive = true
 }
 
-source "proxmox-iso" "rocky9" {
+source "proxmox-iso" "rocky10" {
   # 2. Proxmox Connection
   proxmox_url              = var.proxmox_api_url
   username                 = var.proxmox_username

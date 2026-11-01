@@ -62,7 +62,7 @@ source "proxmox-iso" "rocky9" {
   boot_iso {
     type             = "scsi"
     #iso_file         = "Synology-nfs:iso/Rocky-9.7-x86_64-minimal.iso"
-    iso_url          = "https://mirror.cov.ukservers.com/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-minimal.iso"
+    iso_url          = "https://mirror.cov.ukservers.com/rocky/9/isos/x86_64/Rocky-9-latest-x86_64-minimal.iso"    
     iso_checksum     = "23a1ac1175d8ccada7195863914ef1237f584ff25f73bd53da410d5fffd882b0"
     iso_storage_pool = "Synology-nfs"
     unmount          = true

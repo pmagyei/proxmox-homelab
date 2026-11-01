@@ -78,7 +78,7 @@ source "proxmox-iso" "rocky10" {
   # 8. 
   boot_wait      = "10s"
   boot_command = [
-    "<tab><wait>",
+    "<e><wait>",
     " inst.ks=hd:LABEL=OEMDRV:/ks.cfg",
     " inst.ks=https://gist.githubusercontent.com/pmagyei/7c38eb912d7cce56e1bd6ea203e05bfe/raw/ks.cfg ip=dhcp",
     "<enter>"
